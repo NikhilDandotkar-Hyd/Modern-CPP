@@ -1,6 +1,8 @@
-#include "igg image/io tools.h"
+#include <cmath>
+#include "igg_image/io_tools.h"
 #include "image.h"
 
+namespace igg {
 Image::Image() {}
 
 Image::Image(int rows, int cols):rows_(rows),cols_(cols) {}
@@ -18,9 +20,9 @@ int& Image::at(const int& row,const int& col) {
 }
 
 bool Image::FillFromPgm(const std::string& file_name) {
-	using io_image = igg::io_tools;
-	io_image::ImageData image_data = io_image::ReadFromPgm(file_name);
-	if(imagedata.data.size() == 0 ) {
+	
+	io_tools::ImageData image_data = io_tools::ReadFromPgm(file_name);
+	if(image_data.data.size() == 0 ) {
 		return false;
 	}else {
 	data_ = image_data.data;
@@ -30,21 +32,21 @@ bool Image::FillFromPgm(const std::string& file_name) {
 	}
 }
 
-void Image::WriteToPgm(const std::string& file name) {
-	using io_image = igg::io_tools;
-	io_image::ImageData image_data;
+void Image::WriteToPgm(const std::string& file_name) {
+	
+	io_tools::ImageData image_data;
 	image_data.data = data_;
 	image_data.rows = rows_;
 	image_data.cols = cols_;
 	image_data.max_val = max_val_;
-	io_image::WriteToPgm(image_data, file_name);
+	io_tools::WriteToPgm(image_data, file_name);
 }
 
 std::vector<float> Image::ComputeHistogram(int bins) {
-	std::vector<float> histogram[bins];
+	std::vector<float> histogram(bins);
 	for(auto item:data_){
 		int idx = (int)floor(item/bins);
-		histogram[idx] +=1;
+		++histogram[idx] ;
 	}
 	return histogram;
 }
@@ -53,7 +55,7 @@ void Image::DownScale(int scale) {
 	std::vector<int> scaled_image;
 	for(int r_idx = 0;r_idx < rows_; r_idx += scale) {
 		for(int c_idx = 0;c_idx < cols_; c_idx += scale) {
-			scaled_image.push_back(data_[rows_ * r_idx + c_idx])
+			scaled_image.push_back(data_[rows_ * r_idx + c_idx]);
 		}
 	}
 	rows_ /=scale;
@@ -83,4 +85,6 @@ void Image::UpScale(int scale) {
     rows_ = upscaled_rows;
     cols_ = upscaled_cols;
     data_ = upscaled_image;
+}
+
 }

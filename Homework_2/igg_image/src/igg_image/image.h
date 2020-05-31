@@ -15,7 +15,7 @@ class Image {
     
     int cols();
     
-    int& at(int row,int col);
+    int& at(const int& row,const int& col);
     
     bool FillFromPgm(const std::string& file_name);
     
